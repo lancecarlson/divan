@@ -73,12 +73,15 @@ func (s *Server) TablePut() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tbl := c.Param("tbl")
 		t := NewTable(tbl)
+		t.Db = s.Db
 		if err := t.Create(); err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
+			return
 		}
 		// Reload config
 		if err := s.LoadConfig(); err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
+			return
 		}
 		c.JSON(200, gin.H{"ok": true})
 		return
@@ -158,7 +161,7 @@ func (s *Server) DocPut() gin.HandlerFunc {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"ok": "true", "id": doc.Id, "rev": doc.Rev})
+		c.JSON(200, gin.H{"ok": true, "id": doc.Id, "rev": doc.Rev})
 	}
 }
 
@@ -175,7 +178,7 @@ func (s *Server) DocDelete() gin.HandlerFunc {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"ok": "true"})
+		c.JSON(200, gin.H{"ok": true})
 	}
 }
 

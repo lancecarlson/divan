@@ -38,6 +38,10 @@ func (t *Table) Create() error {
 		return err
 	}
 
+	if t.Db == nil {
+		return fmt.Errorf("database connection required")
+	}
+
 	q := `
 CREATE TABLE %s
 (
