@@ -11,7 +11,8 @@ type Table struct {
 	Db *sql.DB `json:"-"`
 	Type string `json:"type"`
 	Name string `json:"name"`
-	DocField string `json:"doc_field"`
+	DocField string `json:"docfield"`
+	PubKey string `json:"pubkey,omitempty"`
 }
 
 func NewTable(name string) *Table {
@@ -80,6 +81,33 @@ WITH (
 	}
 
 	return nil
+}
+
+func (t *Table) Delete() error {
+	if err := t.validIdentifier(t.Name); err != nil {
+		return err
+	}
+
+	id := fmt.Sprintf("table/%s", t.Name)
+
+	tx, err := t.Db.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(fmt.Sprintf("DROP TABLE %s", t.Name))
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec("DELETE FROM divan WHERE id=$1", id)
+	if err != nil {
+		return err
+	}
+
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+	return err
 }
 
 func TableList(db *sql.DB) (map[string]Table, error) {
