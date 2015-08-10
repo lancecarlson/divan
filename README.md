@@ -3,11 +3,15 @@ Mini CouchDB implementation backed by PostgreSQL.
 
 ## Get Started
 
-Only run with the -b flag the first time if you don't have divan table setup yet. Divan table is used for configuration.
+Only run with the -b flag the first time if you don't have divan table setup yet. Divan table is used for configuration. Start with this command:
 
 ```
 DATABASE_URL=postgres://username:password@dbhost.com:5432/database go run main.go -b
+```
 
+In another terminal, run this commands to test (replace any ids and revisions with the uuids that get generated for you):
+
+```
 # Create a database
 curl -XPUT http://localhost:8080/test
 
